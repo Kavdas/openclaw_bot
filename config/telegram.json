@@ -20,5 +20,9 @@
         "requireMention": true
       }
     }
+  },
+  {
+    "path": "channels.telegram.apiRoot",
+    "value": "https://tg-bot-api-proxy.nurdauletsadvakas.workers.dev"
   }
 ]
