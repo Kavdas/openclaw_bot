@@ -1,0 +1,87 @@
+# OpenClaw + Telegram, запуск через Docker.
+# Основано на upstream docker-compose.yml (github.com/openclaw/openclaw),
+# упрощено под одну машину: готовый образ, состояние в named volumes.
+services:
+  openclaw-gateway:
+    image: ${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      HOME: /home/node
+      OPENCLAW_HOME: /home/node
+      TERM: xterm-256color
+      # Пути внутри контейнера фиксируем, чтобы значения из .env (хостовые) не протекли в рантайм.
+      OPENCLAW_STATE_DIR: /home/node/.openclaw
+      OPENCLAW_CONFIG_PATH: /home/node/.openclaw/openclaw.json
+      OPENCLAW_CONFIG_DIR: /home/node/.openclaw
+      OPENCLAW_WORKSPACE_DIR: /home/node/.openclaw/workspace
+      OPENCLAW_GATEWAY_PORT: "18789"
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN:-}
+      OPENCLAW_DISABLE_BONJOUR: "1"
+      TZ: ${OPENCLAW_TZ:-Asia/Almaty}
+    volumes:
+      # Named volumes, а не bind-mount: на Docker Desktop (Windows) bind-mount
+      # виден контейнеру как root:root 777, и OpenClaw отвергает такой workspace
+      # как небезопасный ("unsafe workspace file").
+      - openclaw-data:/home/node/.openclaw
+      - openclaw-auth:/home/node/.config/openclaw
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:${OPENCLAW_GATEWAY_PORT:-18789}:18789"
+    init: true
+    restart: unless-stopped
+    command: ["node", "dist/index.js", "gateway", "--bind", "lan", "--port", "18789"]
+    healthcheck:
+      test: ["CMD", "node", "dist/docker-healthcheck.js"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # Утилитный контейнер для CLI: docker compose run --rm openclaw-cli <команда>
+  openclaw-cli:
+    image: ${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
+    network_mode: "service:openclaw-gateway"
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      HOME: /home/node
+      OPENCLAW_HOME: /home/node
+      TERM: xterm-256color
+      OPENCLAW_STATE_DIR: /home/node/.openclaw
+      OPENCLAW_CONFIG_PATH: /home/node/.openclaw/openclaw.json
+      OPENCLAW_CONFIG_DIR: /home/node/.openclaw
+      OPENCLAW_WORKSPACE_DIR: /home/node/.openclaw/workspace
+      OPENCLAW_GATEWAY_PORT: "18789"
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN:-}
+      BROWSER: echo
+      TZ: ${OPENCLAW_TZ:-Asia/Almaty}
+    volumes:
+      # Named volumes, а не bind-mount: на Docker Desktop (Windows) bind-mount
+      # виден контейнеру как root:root 777, и OpenClaw отвергает такой workspace
+      # как небезопасный ("unsafe workspace file").
+      - openclaw-data:/home/node/.openclaw
+      - openclaw-auth:/home/node/.config/openclaw
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
+    stdin_open: true
+    tty: true
+    init: true
+    entrypoint: ["node", "dist/index.js"]
+    depends_on:
+      - openclaw-gateway
+
+volumes:
+  openclaw-data:
+  openclaw-auth:

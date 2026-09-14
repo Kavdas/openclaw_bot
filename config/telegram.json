@@ -1,0 +1,24 @@
+[
+  {
+    "path": "channels.telegram.dmPolicy",
+    "value": "open"
+  },
+  {
+    "path": "channels.telegram.allowFrom",
+    "value": [
+      "*"
+    ]
+  },
+  {
+    "path": "channels.telegram.groupPolicy",
+    "value": "allowlist"
+  },
+  {
+    "path": "channels.telegram.groups",
+    "value": {
+      "*": {
+        "requireMention": true
+      }
+    }
+  }
+]

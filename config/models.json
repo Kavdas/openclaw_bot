@@ -1,0 +1,38 @@
+[
+  {
+    "path": "agents.defaults.model",
+    "value": {
+      "primary": "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+      "fallbacks": [
+        "openrouter/nex-agi/nex-n2.5-mini:free",
+        "openrouter/inclusionai/ling-3.0-flash-vl:free",
+        "openrouter/cohere/north-mini-code:free",
+        "openrouter/google/gemma-4-31b-it:free"
+      ]
+    }
+  },
+  {
+    "path": "agents.defaults.models",
+    "value": {
+      "openrouter/nvidia/nemotron-3-super-120b-a12b:free": {
+        "alias": "Nemotron 120B (free)"
+      },
+      "openrouter/nex-agi/nex-n2.5-mini:free": {
+        "alias": "Nex N2.5 mini (free)"
+      },
+      "openrouter/inclusionai/ling-3.0-flash-vl:free": {
+        "alias": "Ling 3.0 flash (free)"
+      },
+      "openrouter/cohere/north-mini-code:free": {
+        "alias": "Cohere North mini (free)"
+      },
+      "openrouter/google/gemma-4-31b-it:free": {
+        "alias": "Gemma 4 31B (free)"
+      }
+    }
+  },
+  {
+    "path": "tools.profile",
+    "value": "minimal"
+  }
+]

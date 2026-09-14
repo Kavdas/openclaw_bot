@@ -1,0 +1,9 @@
+# secrets
+.env
+# upstream clone (reference only)
+openclaw/
+# cloudflare
+cloudflare-worker/node_modules/
+cloudflare-worker/.wrangler/
+# misc
+*.log
