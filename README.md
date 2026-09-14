@@ -114,6 +114,8 @@ Control UI: http://127.0.0.1:18789 (токен — `OPENCLAW_GATEWAY_TOKEN` из
    `agents set-identity --workspace` не находил агента. Обошёл через `--agent main` / `MSYS_NO_PATHCONV=1`.
 3. **Бесплатные модели OpenRouter нестабильны**: Gemma-4 стабильно 429, Nemotron периодически 502.
    Прогнал все 19 `:free`-моделей скриптом, отобрал 5 рабочих с нормальным русским, собрал fallback-цепочку.
+   Уже на втором реальном сообщении в Telegram Nvidia ответила `Service temporarily overloaded` — OpenClaw
+   сделал retry через 0.9 с и ответил (видно в `docker compose logs`).
 4. **Документация OpenClaw огромная** (200+ страниц) и разбита на подстраницы — быстрее оказалось
    склонировать репо и грепать `docs/` и `src/` локально, чем ходить по сайту.
 5. `config set` без `--replace` отказывается перезаписывать объекты; `channels.telegram.streaming` —
